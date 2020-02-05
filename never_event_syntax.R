@@ -348,19 +348,7 @@ ggplot(neverorrderredmonth2) +
 ############################################################################
 ##########################Testing Randomness #######################################
 
-#creating new df 
-dat <-as.data.frame( matrix (0, nr=1303, nc = 1000))
 
-for (i in 1:1000){x<- runif(1303) 
-dat[,i] <-x}
-
-#creating date range (Pulled from Nevent syntax)
-
-never_events <- read_excel("2019_12_11_never_events/never_events.xlsx", 
-                           col_types = c("numeric", "date", "numeric"))
-never1<- never_events
-never1$date1 <- as.Date(never1$date,
-                        format = "%Y/%m/%d")
 
 #changes vector to a df
 #creating new df of random variables. 
