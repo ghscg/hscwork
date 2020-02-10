@@ -413,6 +413,7 @@ for (i in 1:1000){
     dat[,i] <-x
 }
 
+ 
 #Split random numbers into zero and ones at the desired prevalence
 dat[,] <- ifelse(dat[,] < "0.01611665", 1, ifelse(dat[,] > "0.01611665", 0, 1 ) )
 
@@ -422,9 +423,8 @@ plot.df <- as.data.frame(matrix(0, nr = 1000, nc = 2))
 colnames(plot.df) <- c("Mean","Sd")
 
 #Check the run length encoding
-for (i in 1:1000){
 
-    runs <- rle(dat[,i])
+  runs <- rle(dat[,i])
     #Check the length of runs
     runs$lengths
     #Remove the incident days and leave the length of 'no incident' runs
