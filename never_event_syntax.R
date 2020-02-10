@@ -423,7 +423,7 @@ plot.df <- as.data.frame(matrix(0, nr = 1000, nc = 2))
 colnames(plot.df) <- c("Mean","Sd")
 
 #Check the run length encoding
-
+for (i in 1:1000){
   runs <- rle(dat[,i])
     #Check the length of runs
     runs$lengths
@@ -431,7 +431,7 @@ colnames(plot.df) <- c("Mean","Sd")
     noinc.days   <- runs$lengths[which(runs$lengths > 1)]
     plot.df[i,1] <- mean(noinc.days)
     plot.df[i,2] <- sd(noinc.days)
-}
+}      
 
 ##take lines 427 - 433 and run them on the observed data. Take the mean(noinc.days) and put that in place of the 70 below
 
