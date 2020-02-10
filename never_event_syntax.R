@@ -1,6 +1,38 @@
-setwd("P:/Gerard/Data/Never Events/2019_12_11_never_events")
 
-#Loading packages 
+#################
+#               #
+#      Name     #
+#               #
+#################
+
+# Gerard Gallagher developed the script
+# Mark McCann modified he randomisation inference element
+
+#############
+#  Purpose  #
+#############
+
+##############
+#            #
+#    Notes   #
+#            #
+##############
+
+#########################
+#                       #
+#  Outstanding actions  #
+#                       #
+#########################
+
+#The code produces warning xes in Rstudio if the variables touch the + symbols
+#      Add a space to tidy the code 
+
+
+#########################
+#                       #
+#    Load packages      #
+#                       #
+#########################
 library(dplyr)
 library(foreign)
 library(ggplot2)
@@ -17,6 +49,26 @@ library(lubridate)
 library(readxl)
 
 library(fastDummies)
+
+
+#########################
+#                       #
+#     Load functions    #
+#                       #
+#########################
+
+
+#########################
+#                       #
+#  Main body of script  #
+#                       #
+#########################
+
+
+
+setwd("P:/Gerard/Data/Never Events/2019_12_11_never_events")
+
+#Loading packages 
 
 setwd("P:/Gerard/Data/Never Events")
 
@@ -68,11 +120,11 @@ geom_bar(aes(x = sub_category ), fill = "#B3CDE3") +
   xlab("Event Type") + ylab("Number of Events") +
   theme(axis.text.x = element_text(angle = 70,hjust = 1)) 
  
-t_e +scale_y_continuous(name="Number of Events", limits=c(0, 15))
+t_e + scale_y_continuous(name="Number of Events", limits=c(0, 15))
 
 #creating a vector of time between events 
 
-events <- sort(sample(never1$date1, 21))
+events <- sort(sample(never1$date1, 21) )
 d <- c(NA, diff(events))
  
 
@@ -332,7 +384,7 @@ ggplot(neverordered2) +
 
 
 #event type x month 
-neverorrderredmonth2 <-neverordermonth[order(neverordermonth$month2),]
+neverorrderredmonth2 <- neverordermonth[order(neverordermonth$month2),]
 ggplot(neverorrderredmonth2) +
   geom_bar(aes(x = month2 ), fill = "#B3CDE3") +
   ggtitle("Events by Month") +
@@ -342,30 +394,49 @@ ggplot(neverorrderredmonth2) +
 
 
 
-
-
-
 ############################################################################
-##########################Testing Randomness #######################################
-
-
+############################################################################
+############################################################################
+################## Randomisation inference for events ######################
+############################################################################
+############################################################################
 
 #changes vector to a df
 #creating new df of random variables. 
-dat <-as.data.frame( matrix (0, nr=1303, nc = 1000))
 
-for (i in 1:1000){x<- runif(1303) 
-dat[,i] <-x}
+# create blank data frame
+dat <- as.data.frame( matrix(0, nr=1303, nc = 1000) )
 
-#calculating values to 0,1.
-dat[,] <- ifelse(dat[,] < "0.01611665", 1, ifelse(dat[,] > "0.01611665", 0, 1 ))
+#Generate random numbers
+for (i in 1:1000){
+    x<- runif(1303) 
+    dat[,i] <-x
+}
 
-#creating date range 
-start_date <- as.Date("2016/10/10")
-Date<- seq(start_date, by = "day", length.out = 1303)
-#add date vector to a df
-dat$date <- Date
+ 
+#Split random numbers into zero and ones at the desired prevalence
+dat[,] <- ifelse(dat[,] < "0.01611665", 1, ifelse(dat[,] > "0.01611665", 0, 1 ) )
 
-#Calculating time between events 
+length(dat[,1])
 
-dat1 <- c( diff(dat[,]))
+plot.df <- as.data.frame(matrix(0, nr = 1000, nc = 2))
+colnames(plot.df) <- c("Mean","Sd")
+
+#Check the run length encoding
+
+  runs <- rle(dat[,i])
+    #Check the length of runs
+    runs$lengths
+    #Remove the incident days and leave the length of 'no incident' runs
+    noinc.days   <- runs$lengths[which(runs$lengths > 1)]
+    plot.df[i,1] <- mean(noinc.days)
+    plot.df[i,2] <- sd(noinc.days)
+}
+
+##take lines 427 - 433 and run them on the observed data. Take the mean(noinc.days) and put that in place of the 70 below
+
+ggplot(plot.df, aes(Mean))  + geom_density() + geom_vline(aes(xintercept=70, color = "red")) + theme(legend.position = "none")
+
+ggplot(plot.df, aes(Sd))  + geom_density() + geom_vline(aes(xintercept=70, color = "red")) + theme(legend.position = "none")
+
+
